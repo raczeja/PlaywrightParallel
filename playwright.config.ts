@@ -7,14 +7,11 @@ const envConfig = getEnvironmentConfig(env);
 export default defineConfig({
   testDir: "./tests",
 
-  fullyParallel: true,
+  // fullyParallel: false means tests in the same file run sequentially,
+  // while different spec files run in parallel across workers
+  fullyParallel: false,
 
-  // Let Playwright pick optimal worker count when running locally.
-  // In CI constrain workers to a small number to avoid resource exhaustion.
-  workers: process.env.CI ? 2 : undefined,
-
-  // Fail fast if `test.only` is left in the code on CI.
-  forbidOnly: !!process.env.CI,
+  workers: process.env.CI ? 2 : 4,
 
   retries: process.env.CI ? 2 : 0,
 

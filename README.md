@@ -112,21 +112,23 @@ projects: [
 
 ## Parallel Execution
 
-Tests run in parallel by default. Configure in `playwright.config.ts`:
+The framework is configured to run tests in parallel **between different spec files**, while tests **within the same spec file run sequentially**. This is controlled in `playwright.config.ts`:
 
 ```typescript
-fullyParallel: true,
-workers: process.env.CI ? 2 : 4,
+fullyParallel: false,  // Tests in same file run sequentially
+workers: process.env.CI ? 2 : 4,  // Number of parallel workers for different files
 ```
 
-To run tests sequentially in a describe block:
+**How it works:**
+- **Different spec files** (e.g., `example.spec.ts`, `login.spec.ts`, `parallel-demo.spec.ts`) run in parallel across 4 workers
+- **Tests within the same file** run one after another (sequentially)
 
-```typescript
-test.describe('Sequential Tests', () => {
-  test.describe.configure({ mode: 'serial' });
-  // tests here run in sequence
-});
-```
+This approach is useful when:
+- Tests in a file share setup/teardown logic
+- Tests in a file have dependencies on each other
+- You want to avoid race conditions within a test suite
+
+To run all tests in parallel (even within the same file), change `fullyParallel: true` in the config.
 
 ## Page Object Model
 
