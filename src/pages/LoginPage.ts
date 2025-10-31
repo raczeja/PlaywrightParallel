@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { Page, Locator } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class LoginPage extends BasePage {
   private readonly usernameInput: Locator;
@@ -11,22 +11,41 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.usernameInput = page.locator('input[name="username"], input[type="email"]').first();
-    this.passwordInput = page.locator('input[name="password"], input[type="password"]').first();
-    this.loginButton = page.locator('button[type="submit"], button:has-text("Login")').first();
-    this.errorMessage = page.locator('.error, .alert-danger, [role="alert"]').first();
-    this.forgotPasswordLink = page.locator('text=Forgot password').first();
-    this.rememberMeCheckbox = page.locator('input[type="checkbox"][name="remember"]').first();
+    this.usernameInput = page
+      .locator('input[name="username"], input[type="email"]')
+      .first();
+    this.passwordInput = page
+      .locator('input[name="password"], input[type="password"]')
+      .first();
+    this.loginButton = page
+      .locator('button[type="submit"], button:has-text("Login")')
+      .first();
+    this.errorMessage = page
+      .locator('.error, .alert-danger, [role="alert"]')
+      .first();
+    this.forgotPasswordLink = page.locator("text=Forgot password").first();
+    this.rememberMeCheckbox = page
+      .locator('input[type="checkbox"][name="remember"]')
+      .first();
   }
 
-  async open(baseURL: string): Promise<void> {
-    await this.navigateTo(`${baseURL}/login`);
+  async open(path: string = "/login"): Promise<void> {
+    // Navigate to login path relative to Playwright baseURL by default
+    await this.page.goto(path);
     await this.waitForPageLoad();
   }
 
   async login(username: string, password: string): Promise<void> {
     await this.fillInput(this.usernameInput, username);
     await this.fillInput(this.passwordInput, password);
+    await this.clickElement(this.loginButton);
+  }
+
+  /**
+   * Clicks login button without additional waits. Useful together with Promise.all
+   * where the test waits for navigation or some post-login element.
+   */
+  async clickLoginButton(): Promise<void> {
     await this.clickElement(this.loginButton);
   }
 

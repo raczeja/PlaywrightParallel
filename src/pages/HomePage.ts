@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { Page, Locator } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class HomePage extends BasePage {
   private readonly heading: Locator;
@@ -9,14 +9,18 @@ export class HomePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.heading = page.locator('h1');
-    this.getStartedButton = page.locator('text=Get started');
+    this.heading = page.locator("h1");
+    this.getStartedButton = page.locator("text=Get started");
     this.searchInput = page.locator('input[type="search"]');
-    this.navigationMenu = page.locator('nav');
+    this.navigationMenu = page.locator("nav");
   }
 
-  async open(baseURL: string): Promise<void> {
-    await this.navigateTo(baseURL);
+  /**
+   * Open home page. If no path provided, navigates to baseURL configured in Playwright
+   * (use page.goto('/') so baseURL from config is honored).
+   */
+  async open(path: string = "/"): Promise<void> {
+    await this.page.goto(path);
     await this.waitForPageLoad();
   }
 
@@ -34,13 +38,15 @@ export class HomePage extends BasePage {
 
   async search(query: string): Promise<void> {
     await this.fillInput(this.searchInput, query);
-    await this.pressKey('Enter');
+    await this.pressKey("Enter");
   }
 
   async verifyPageTitle(expectedTitle: string): Promise<void> {
     const title = await this.getTitle();
     if (!title.includes(expectedTitle)) {
-      throw new Error(`Expected title to contain "${expectedTitle}" but got "${title}"`);
+      throw new Error(
+        `Expected title to contain "${expectedTitle}" but got "${title}"`
+      );
     }
   }
 
