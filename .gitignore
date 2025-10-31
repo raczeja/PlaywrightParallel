@@ -8,3 +8,6 @@ node_modules/
 package-lock.json
 *.log
 .DS_Store
+
+# Do not commit Playwright storage state containing auth/session cookies
+storageState.json
